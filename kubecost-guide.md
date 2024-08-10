@@ -1,6 +1,6 @@
 # Optimizing EKS Cluster Cost using `Kubecost`
 
-**Optimizing the cost of our EKS clusters is very important. If we don't manage the cost of our EKS clusters properly, it may lead to a huge bill at the month end.** So to vaoid this we need to optimize the cost of our EKS cluster. To Optimize the cost of the EKS cluster, we need to monitor the cost of the EKS cluster continuously. So we need a tool to monitor the cost of the EKS cluster. There are so many Open Source and third-party tools available to optimize the cost of the EKS cluster. In this article, we will discuss how we can optimize the cost of the EKS cluster using a tool called `Kubecost`.
+**Optimizing the cost of our EKS clusters is very important. If we don't manage the cost of our EKS clusters properly, it may lead to a huge bill at the month end.** So to avoid this we need to optimize the cost of our EKS cluster. To Optimize the cost of the EKS cluster, we need to monitor the cost of the EKS cluster continuously. So we need a tool to monitor the cost of the EKS cluster. There are so many Open Source and third-party tools available to optimize the cost of the EKS cluster. In this article, we will discuss how we can optimize the cost of the EKS cluster using a tool called `Kubecost`.
 
 ## What is `Kubecost`?
 
