@@ -95,7 +95,7 @@ The above command will show the EKS Cluster details in a user-friendly table for
 
 Before installing `Kubecost`, We need to understand some Prerequisites that `kubecost` depends on.<br>
 
-[Screenshot]()
+![Screenshot 2024-08-10 214337](https://github.com/user-attachments/assets/0787d3d8-feeb-4469-9c71-1000b086417b)
 
 If you look at the above picture, You can see that we need `EBS CSI Driver` and `Helm` to install `Kubecost` in the EKS cluster. So, Let's see how we can install `EBS CSI Driver` and `Helm` in our EKS cluster.<br>
 
