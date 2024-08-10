@@ -12,7 +12,7 @@ Now, Let's see how we can optimize the cost of our EKS cluster using `Kubecost`.
 
 ## Architecture/Workflow Diagram
 
-![Optimizing EKS Cluster Cost using Kubecost]()
+![Kubecost - EKS](https://github.com/user-attachments/assets/e2dbcf5c-6c2d-41e4-9401-5f351c121559)
 
 ## Prerequisites
 
@@ -113,7 +113,12 @@ That's all some lots of manual work right? But we have a tool called `eksdemo` w
 ```bash
 eksdemo install storage-ebs-csi -c <cluster-name>
 ```
+![Screenshot 2024-08-07 154525](https://github.com/user-attachments/assets/eef3cae9-2da2-4d02-afce-70ce2461ec68)
+
 This command will install the `EBS CSI Driver` in the EKS cluster. And it will also manage the IAM roles and policies for you. So, you don't need to worry about the IAM roles and policies. `eksdemo` will take care of that for you.
+
+- You can check the installation using `kubectl get pods -n kube-system` Command.
+![Screenshot 2024-08-07 154746](https://github.com/user-attachments/assets/efcfa6ad-5d3f-4643-ba7a-9f9af0aad0df)
 
 ### Installing `Kubecost`
 
@@ -124,16 +129,22 @@ Now, we have installed the `EBS CSI Driver` in our EKS cluster. Let's see how we
 ```bash
 eksdemo install kubecost-eks-amp -c <cluster-name> --node-exporter
 ```
+![Screenshot 2024-08-07 155027](https://github.com/user-attachments/assets/7d8cd869-0270-4afd-b76f-1df021f83a08)
+![Screenshot 2024-08-07 155057](https://github.com/user-attachments/assets/b0e2163f-3a49-4d0b-8607-1a50dfc76901)
+
 
 This command will install the `Kubecost` in the EKS cluster with required Dependencies. Also, it will install the `Node Exporter` for you. In our case. `Node Exporter` is `Prometheus` so it will install the `Prometheus` for you. Because for collecting the metrics, `Kubecost` uses the `Prometheus`. If you already have the `Prometheus` installed in your EKS cluster, you can skip the `--node-exporter` flag.<br>
 
-That command will also create one `Classic LoadBalancer` service for you. You can access your `Kubecost` dashboard using the `LoadBalancer` service URL.
+That command will also create one `Classic LoadBalancer` service for you. You can explore it in your console also.
+![Screenshot 2024-08-07 160315](https://github.com/user-attachments/assets/ec3803a2-7f3a-4016-ad83-898950bdc03e)
+
 
 - You can verify the installation by running the below command:
 
 ```bash
 kubectl get pods -n kubecost
 ```
+![Screenshot 2024-08-07 155601](https://github.com/user-attachments/assets/5013cfc7-168e-4e2d-a0e9-f26b7bf65436)
 
 - You can access the `Kubecost` dashboard using the `LoadBalancer` service URL. You can get the `LoadBalancer` service URL by running the below command:
 
@@ -143,23 +154,38 @@ kubectl get svc -n kubecost
 
 You can also get the `LoadBalancer` service URL from the `AWS Console`. You can navigate to the `EC2` service and then `Load Balancers` to get the `LoadBalancer` service URL.
 
-![Screenshot]()
+![Screenshot 2024-08-07 155643](https://github.com/user-attachments/assets/f499d934-0a30-436c-88c7-d7145cb1f034)
 
 You have to copy the `LoadBalancer` service URL and open it in the browser with Port `9090`. You will see the `Kubecost` dashboard like below:
 
-![Screenshot]()
+![Screenshot 2024-08-07 155516](https://github.com/user-attachments/assets/cd8c8af1-4d21-4715-94fb-2a9d2cdb038f)
+
+- Another way of accessing your `kubecost` dashboard is using `kubectl port-forward --namespace kubecost deployment/kubecost-cost-analyzer 9090` command. By using this command we can access our `kubecost` dashboard by using `localhost:9090` address in our Host machine.
 
 ### Utilizing `Kubecost` Dashboard
 
 Once you open the `Kubecost` dashboard, You can see the cost of your EKS cluster in the dashboard. It also have lots of features like `Savings`, `Monitor`, `Alerts`, `Health` and `Govern`.<br> I cannot explain all the features here. But I will explain some of the important features here.
 
-If you navigate to the `Savings` tab, You can see the potential savings of your EKS cluster. It will also show you some recommendations to save cost of your EKS cluster. You can follow the recommendations to save the cost of your EKS cluster.
+![Screenshot 2024-08-07 155718](https://github.com/user-attachments/assets/22d7470a-60b4-4839-b1eb-dcff3193bc31)
+![Screenshot 2024-08-07 155734](https://github.com/user-attachments/assets/5c65d1cd-acea-43ec-9664-50f0907f40a9)
+![Screenshot 2024-08-07 155746](https://github.com/user-attachments/assets/144fc5b3-3baa-4797-9545-0d5963e21a77)
+![Screenshot 2024-08-07 155805](https://github.com/user-attachments/assets/0ffd199e-74c6-4de7-ac00-8d50e484b29b)
 
+#### Savings
+**If you navigate to `Savings` tab, You can see the potential savings of your EKS cluster. It will also show you some recommendations to save cost of your EKS cluster. You can follow the recommendations to save the cost of your EKS cluster.**
+
+![Screenshot 2024-08-07 155821](https://github.com/user-attachments/assets/0ec64e23-e5d1-40ad-a1ec-77a2a5d06fa5)
+![Screenshot 2024-08-07 155833](https://github.com/user-attachments/assets/9cf35f01-37a0-4cbd-bdd5-bcd4db3cbbe3)
+![Screenshot 2024-08-07 155859](https://github.com/user-attachments/assets/c632468b-ffac-4cb8-b594-46003d48ed01)
+
+#### Cluster Health
 You can also see the **Health** of your EKS cluster in the `Health` tab. It will show you the health of your EKS cluster like `CPU Utilization`, `Memory Utilization`, `Disk Utilization`, etc.
+![Screenshot 2024-08-07 155919](https://github.com/user-attachments/assets/8a57fb4d-bcc9-433e-b1b5-e66049596a6d)
 
-
+#### Switching Cluster
 To Switch the Cluster, You can follow the below steps:
-
+![Screenshot 2024-08-07 155946](https://github.com/user-attachments/assets/6f5f86e1-c625-4dda-8f09-6d45a2d1c86c)
+![Screenshot 2024-08-07 155959](https://github.com/user-attachments/assets/5f1d0ee9-5f36-4cfa-b545-390b42b76fe9)
 
 ### Deleting the EKS Cluster
 
@@ -168,6 +194,8 @@ Once you are done with the `Kubecost` dashboard, You can delete the EKS cluster 
 ```bash
 eksdemo delete cluster -c <cluster-name>
 ```
+![Screenshot 2024-08-07 160653](https://github.com/user-attachments/assets/6b468584-9e70-41c9-b5ef-03fb650d4de4)
+![Screenshot 2024-08-07 162554](https://github.com/user-attachments/assets/abcb4ac4-661e-43d7-9b57-81088dca3be3)
 
 It will delete the EKS cluster and all the resources associated with the EKS cluster.
 
