@@ -1,6 +1,6 @@
 # Optimizing EKS Cluster Cost using `Kubecost`
 
-**Optimizing the cost of our EKS clusters is very important. If we don't manage the cost of our EKS clusters properly, it may lead to a huge bill at the month end.** So to avoid this we need to optimize the cost of our EKS cluster. To Optimize the cost of the EKS cluster, we need to monitor the cost of the EKS cluster continuously. So we need a tool to monitor the cost of the EKS cluster. There are so many Open Source and third-party tools available to optimize the cost of the EKS cluster. In this article, we will discuss how we can optimize the cost of the EKS cluster using a tool called `Kubecost`.
+**Optimizing the cost of our EKS clusters is very important. If we don't manage the cost of our EKS clusters properly, it may lead to a huge bill at the month end.** So to avoid this we need to optimize the cost of our EKS cluster. To Optimize the cost of our EKS clusters, we need to monitor the cost of our EKS cluster continuously, But for monitoring the cost of the cluster we need some tool right? There are so many Open Source and third-party tools available to optimize the cost of the EKS cluster. In this article, we will discuss how we can optimize the cost of the EKS cluster using a tool called `Kubecost`.
 
 ## What is `Kubecost`?
 
@@ -17,7 +17,7 @@ Now, Let's see how we can optimize the cost of our EKS cluster using `Kubecost`.
 ## Prerequisites
 
 - An AWS account with necessary permissions to create EKS clusters.
-- A Linux, MacOS or Windows machine with `AWS CLI`, `eksctl`, and `kubectl` installed.
+- A Linux, MacOS or Windows machine with `AWS CLI`, `eksctl`, `eksdemo` and `kubectl` installed.
     - [Install AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html)
     - [Install eksctl](https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html)
     - [Install kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
@@ -91,13 +91,15 @@ The above command will show the EKS Cluster details in a user-friendly table for
 ![Screenshot 2024-08-07 152629](https://github.com/user-attachments/assets/4ee670d7-10a9-42ce-ba78-68d95c40574f)
 ![Screenshot 2024-08-07 152642](https://github.com/user-attachments/assets/a35bb7de-3b3d-4606-b456-07adf6284de9)
 
-### Installing `Kubecost`
+### Installing `Kubecost` and `EBS CSI Driver`
 
 Before installing `Kubecost`, We need to understand some Prerequisites that `kubecost` depends on.<br>
 
-If you look at the above picture, You can see that we need `EBS CSI Driver` and `Helm` to install `Kubecost` in the EKS cluster. So, Let's see how we can install `EBS CSI Driver` and `Helm` in the EKS cluster.<br>
+[Screenshot]()
 
-Let's look at the most followed way of installing `EBS CSI Driver` and `Helm` in the EKS cluster:
+If you look at the above picture, You can see that we need `EBS CSI Driver` and `Helm` to install `Kubecost` in the EKS cluster. So, Let's see how we can install `EBS CSI Driver` and `Helm` in our EKS cluster.<br>
+
+The most followed way of installing `EBS CSI Driver` and `Helm` in the EKS cluster:
 
 - To install `Helm`, We need to run some commands. You can find the commands to install `Helm` [here](https://helm.sh/docs/intro/install/).
 - Same goes with `EBS CSI Driver`. But for `EBS CSI Driver`, We need to create some IAM roles and policies by ourselves before installing the `EBS CSI Driver`. You can find the commands to install `EBS CSI Driver` [here](https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html). 
@@ -115,7 +117,7 @@ eksdemo install storage-ebs-csi -c <cluster-name>
 ```
 ![Screenshot 2024-08-07 154525](https://github.com/user-attachments/assets/eef3cae9-2da2-4d02-afce-70ce2461ec68)
 
-This command will install the `EBS CSI Driver` in the EKS cluster. And it will also manage the IAM roles and policies for you. So, you don't need to worry about the IAM roles and policies. `eksdemo` will take care of that for you.
+This command will install the `EBS CSI Driver` in the EKS cluster. And it will also manage the IAM roles and policies for you. So, you don't need to worry about any IAM roles and policies. `eksdemo` will take care of that for you.
 
 - You can check the installation using `kubectl get pods -n kube-system` Command.
 ![Screenshot 2024-08-07 154746](https://github.com/user-attachments/assets/efcfa6ad-5d3f-4643-ba7a-9f9af0aad0df)
@@ -133,13 +135,13 @@ eksdemo install kubecost-eks-amp -c <cluster-name> --node-exporter
 ![Screenshot 2024-08-07 155057](https://github.com/user-attachments/assets/b0e2163f-3a49-4d0b-8607-1a50dfc76901)
 
 
-This command will install the `Kubecost` in the EKS cluster with required Dependencies. Also, it will install the `Node Exporter` for you. In our case. `Node Exporter` is `Prometheus` so it will install the `Prometheus` for you. Because for collecting the metrics, `Kubecost` uses the `Prometheus`. If you already have the `Prometheus` installed in your EKS cluster, you can skip the `--node-exporter` flag.<br>
+This command will install the `Kubecost` in the EKS cluster with required Dependencies. Also, it will install the `Node Exporter` for you. In our case, The `Node Exporter` is `Prometheus` so it will install the `Prometheus` for you. Because for collecting the metrics, `Kubecost` uses the `Prometheus` behind the scenes. If you already have the `Prometheus` installed in your EKS cluster, you can skip the `--node-exporter` flag.<br>
 
 That command will also create one `Classic LoadBalancer` service for you. You can explore it in your console also.
 ![Screenshot 2024-08-07 160315](https://github.com/user-attachments/assets/ec3803a2-7f3a-4016-ad83-898950bdc03e)
 
 
-- You can verify the installation by running the below command:
+- Now, You can verify the installation by running the below command:
 
 ```bash
 kubectl get pods -n kubecost
@@ -152,19 +154,19 @@ kubectl get pods -n kubecost
 kubectl get svc -n kubecost
 ```
 
-You can also get the `LoadBalancer` service URL from the `AWS Console`. You can navigate to the `EC2` service and then `Load Balancers` to get the `LoadBalancer` service URL.
-
 ![Screenshot 2024-08-07 155643](https://github.com/user-attachments/assets/f499d934-0a30-436c-88c7-d7145cb1f034)
 
 You have to copy the `LoadBalancer` service URL and open it in the browser with Port `9090`. You will see the `Kubecost` dashboard like below:
 
 ![Screenshot 2024-08-07 155516](https://github.com/user-attachments/assets/cd8c8af1-4d21-4715-94fb-2a9d2cdb038f)
 
+You can also get the `LoadBalancer` service URL from the `AWS Console`. You can navigate to the `EC2` service and then `Load Balancers` to get the `LoadBalancer` service URL.
+
 - Another way of accessing your `kubecost` dashboard is using `kubectl port-forward --namespace kubecost deployment/kubecost-cost-analyzer 9090` command. By using this command we can access our `kubecost` dashboard by using `localhost:9090` address in our Host machine.
 
 ### Utilizing `Kubecost` Dashboard
 
-Once you open the `Kubecost` dashboard, You can see the cost of your EKS cluster in the dashboard. It also have lots of features like `Savings`, `Monitor`, `Alerts`, `Health` and `Govern`.<br> I cannot explain all the features here. But I will explain some of the important features here.
+Once you open up the `Kubecost` dashboard, You can see the cost of your EKS cluster in the dashboard. It also have lots of features like `Savings`, `Monitor`, `Alerts`, `Health` and `Govern`.<br> I cannot explain all the features here. But I will explain some of the important features here.
 
 ![Screenshot 2024-08-07 155718](https://github.com/user-attachments/assets/22d7470a-60b4-4839-b1eb-dcff3193bc31)
 ![Screenshot 2024-08-07 155734](https://github.com/user-attachments/assets/5c65d1cd-acea-43ec-9664-50f0907f40a9)
@@ -179,7 +181,7 @@ Once you open the `Kubecost` dashboard, You can see the cost of your EKS cluster
 ![Screenshot 2024-08-07 155859](https://github.com/user-attachments/assets/c632468b-ffac-4cb8-b594-46003d48ed01)
 
 #### Cluster Health
-You can also see the **Health** of your EKS cluster in the `Health` tab. It will show you the health of your EKS cluster like `CPU Utilization`, `Memory Utilization`, `Disk Utilization`, etc.
+You can also see the **Health** of your EKS cluster in the `Health` tab. It will give you some score based on the health of your EKS cluster.
 ![Screenshot 2024-08-07 155919](https://github.com/user-attachments/assets/8a57fb4d-bcc9-433e-b1b5-e66049596a6d)
 
 #### Switching Cluster
