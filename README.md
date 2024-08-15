@@ -18,7 +18,7 @@
 ## Usage
 
 Refer the [Kubecost Guide Section](kubecost-guide.md) for detailed steps to install and use Kubecost on your EKS cluster.<br>
-Article on Medium: [Kubecost Guide](https://medium.com/@mathesh-me)
+Article on Medium: [Kubecost Guide](https://medium.com/towards-aws/optimizing-eks-clusters-cost-using-kubecost-7959a4e76106)
 
 ## Contributing
 
